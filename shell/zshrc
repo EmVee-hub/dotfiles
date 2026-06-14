@@ -1,0 +1,7 @@
+# User specific environment
+if ! [[ "$PATH" =~ "$HOME/.local/bin:$HOME/bin:" ]]; then
+    PATH="$HOME/.local/bin:$HOME/bin:$PATH"
+fi
+bindkey "^[[1;5C" forward-word
+bindkey "^[[1;5D" backward-word
+export PATH

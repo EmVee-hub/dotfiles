@@ -1,0 +1,25 @@
+#!/bin/bash
+# shell/trivy
+# Runs Trivy via Docker, transparently forwarding all arguments.
+
+TRIVY_IMAGE="aquasec/trivy:latest"
+TRIVY_CACHE_DIR="${HOME}/.cache/trivy"
+
+# Pull latest image before running
+docker pull "$TRIVY_IMAGE" > /dev/null 2>&1 &
+PULL_PID=$!
+
+mkdir -p "$TRIVY_CACHE_DIR"
+
+# Wait for pull only if the image doesn't exist locally yet
+if ! docker image inspect "$TRIVY_IMAGE" > /dev/null 2>&1; then
+    echo "Pulling Trivy image..." >&2
+    wait $PULL_PID
+fi
+
+docker run --rm \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -v "$TRIVY_CACHE_DIR:/root/.cache/trivy" \
+    -v "$(pwd):/workdir" \
+    -w /workdir \
+    "$TRIVY_IMAGE" "$@"
