@@ -4,6 +4,9 @@
 DOTFILES_DIR="$(cd "$(dirname "$(realpath "$0")")" && pwd)"
 BIN_DIR="$DOTFILES_DIR/bin"
 
+
+chsh -s $(which zsh)
+
 find "$DOTFILES_DIR/shell" -maxdepth 1 -type f | while read -r source; do
     filename="${source##*/}"
     target="$HOME/.$filename"
