@@ -2,6 +2,20 @@
 if ! [[ "$PATH" =~ "$HOME/.local/bin:$HOME/bin:" ]]; then
     PATH="$HOME/.local/bin:$HOME/bin:$PATH"
 fi
+
+autoload -Uz compinit && compinit
+
+#binds
 bindkey "^[[1;5C" forward-word
 bindkey "^[[1;5D" backward-word
+
+
+
+#checks
+aws --version &> /dev/null
+if [ $? -ne 0 ]; then
+    echo "AWS CLI is not installed. Please install it to use AWS commands."
+fi
+
+
 export PATH
