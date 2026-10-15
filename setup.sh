@@ -1,25 +1,35 @@
-#!/bin/bash
-# setup.sh
+#!/usr/bin/env bash
+set -euo pipefail
 
-DOTFILES_DIR="$(cd "$(dirname "$(realpath "$0")")" && pwd)"
-BIN_DIR="$DOTFILES_DIR/bin"
+DOTFILES_DIR="$(cd -- "$(dirname -- "$(realpath -- "${BASH_SOURCE[0]}")")" && pwd)"
+ZSH_PATH="$(command -v zsh)"
+current_shell="$(getent passwd "${USER:-$(id -un)}" | cut -d: -f7)"
 
-chsh -s $(which zsh)
+if [[ "$current_shell" != "$ZSH_PATH" ]]; then
+    chsh -s "$ZSH_PATH"
+fi
 
-find "$DOTFILES_DIR/shell" -maxdepth 1 -type f | while read -r source; do
+mkdir -p "$HOME/.local/bin"
+while IFS= read -r -d '' source; do
     filename="${source##*/}"
     target="$HOME/.$filename"
 
-    echo "Creating symlink: $target -> $source"
+    printf 'Creating symlink: %s -> %s\n' "$target" "$source"
     ln -sfn "$source" "$target"
-    chmod +x "$source"
-done
+done < <(find "$DOTFILES_DIR/shell" -maxdepth 1 -type f -print0)
 
-find "$DOTFILES_DIR/bin" -maxdepth 1 -type f | while read -r source; do
+while IFS= read -r -d '' source; do
     filename="${source##*/}"
     target="$HOME/.local/bin/$filename"
 
-    echo "Creating symlink: $target -> $source"
+    printf 'Creating symlink: %s -> %s\n' "$target" "$source"
     ln -sfn "$source" "$target"
-    chmod +x "$source"
-done
+done < <(find "$DOTFILES_DIR/bin" -maxdepth 1 -type f -print0)
+
+if [[ -f "$DOTFILES_DIR/config/minikube/driver" ]]; then
+    if ! command -v minikube >/dev/null 2>&1; then
+        printf 'minikube is configured in dotfiles but is not installed.\n' >&2
+        exit 1
+    fi
+    minikube config set driver "$(<"$DOTFILES_DIR/config/minikube/driver")"
+fi
