@@ -18,6 +18,11 @@ while IFS= read -r -d '' source; do
     ln -sfn "$source" "$target"
 done < <(find "$DOTFILES_DIR/shell" -maxdepth 1 -type f -print0)
 
+if ! git config --global --get-all include.path 2>/dev/null \
+    | grep -Fqx "$DOTFILES_DIR/gitconfig"; then
+    git config --global --add include.path "$DOTFILES_DIR/gitconfig"
+fi
+
 while IFS= read -r -d '' source; do
     filename="${source##*/}"
     target="$HOME/.local/bin/$filename"

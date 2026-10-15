@@ -1,0 +1,11 @@
+[core]
+	pager = cat
+
+[submodule]
+	recurse = true
+
+[push]
+	recurseSubmodules = check
+
+[status]
+	submoduleSummary = true
