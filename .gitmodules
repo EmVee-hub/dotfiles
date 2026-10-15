@@ -1,0 +1,4 @@
+[submodule "nvim-conf"]
+	path = nvim-conf
+	url = https://github.com/EmVee-hub/nvim-conf.git
+	branch = main

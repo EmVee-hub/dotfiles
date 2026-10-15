@@ -26,6 +26,22 @@ while IFS= read -r -d '' source; do
     ln -sfn "$source" "$target"
 done < <(find "$DOTFILES_DIR/bin" -maxdepth 1 -type f -print0)
 
+NVIM_DIR="$DOTFILES_DIR/nvim-conf"
+if [[ ! -d "$NVIM_DIR/lua" || ! -f "$NVIM_DIR/init.lua" ]]; then
+    printf 'Neovim config submodule is missing: %s (run git submodule update --init --recursive).\n' \
+        "$NVIM_DIR" >&2
+    exit 1
+fi
+
+while IFS= read -r -d '' source; do
+    relative="${source#"$NVIM_DIR"/}"
+    target="$HOME/.config/nvim/$relative"
+
+    mkdir -p "$(dirname "$target")"
+    printf 'Creating symlink: %s -> %s\n' "$target" "$source"
+    ln -sfn "$source" "$target"
+done < <(find "$NVIM_DIR" -type f \( -path "$NVIM_DIR/init.lua" -o -path "$NVIM_DIR/lua/*" \) -print0)
+
 if [[ -f "$DOTFILES_DIR/config/minikube/driver" ]]; then
     if ! command -v minikube >/dev/null 2>&1; then
         printf 'minikube is configured in dotfiles but is not installed.\n' >&2
