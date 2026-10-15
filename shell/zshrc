@@ -1,4 +1,6 @@
 # User specific environment
+export TMUX_TMPDIR='/tmp'
+
 if ! [[ "$PATH" =~ "$HOME/.local/bin:$HOME/bin:" ]]; then
     PATH="$HOME/.local/bin:$HOME/bin:$PATH"
 fi
