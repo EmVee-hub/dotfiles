@@ -10,6 +10,10 @@ if [[ "$current_shell" != "$ZSH_PATH" ]]; then
 fi
 
 mkdir -p "$HOME/.local/bin"
+npm install --global --prefix "$HOME/.local/share/yaml-language-server" yaml-language-server@2.0.0
+ln -sfn "$HOME/.local/share/yaml-language-server/bin/yaml-language-server" \
+    "$HOME/.local/bin/yaml-language-server"
+
 while IFS= read -r -d '' source; do
     filename="${source##*/}"
     target="$HOME/.$filename"
