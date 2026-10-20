@@ -9,3 +9,7 @@ Docker and links it into `~/.local/bin`.
 
 `setup.sh` includes `gitconfig` from the user's global Git configuration,
 preserving other user-specific Git settings while managing the shared defaults.
+
+`setup.sh` links the tmux configuration to `~/.tmux.conf`. It enables tmux
+clipboard integration so terminal applications such as GitHub Copilot CLI can
+copy through OSC 52 to the terminal clipboard without mounting Windows drives.
